@@ -1,8 +1,9 @@
 const express = require("express");
-const mysql = require("mysql");
 const dotenv = require("dotenv");
 var cors = require("cors");
 const cookieParser = require("cookie-parser");
+require("./utils/connect");
+const bodyParser = require("body-parser");
 
 const userRoute = require("./routes/users");
 const authRoutes = require("./routes/authRoutes");
@@ -14,27 +15,14 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/users", userRoute);
 app.use("/api/auth", authRoutes);
 
-// const db = () => {
-//   try {
-//     mysql.createConnection({
-//       host: "localhost",
-//       user: "root",
-//       password: "",
-//       database: "ev-point",
-//     });
-
-//     console.log("Connected to MongoDB!");
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
-
 app.listen(process.env.PORT, () => {
   console.log("Example app listening on port !");
-  // db();
+  // console.log("database connected sucessfully");
 });

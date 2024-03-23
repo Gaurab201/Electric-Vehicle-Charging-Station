@@ -1,68 +1,87 @@
 const db = require("../utils/connect");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
+const sendMail = require("../utils/email_function");
 
 module.exports = {
   register: async (req, res) => {
-    // Chech User if exits
+    const { username, email, password } = req.body;
 
-    const q = "SELECT*FROM users WHERE username = ?";
+    // Check if user already exists
+    const checkUserQuery = "SELECT * FROM users WHERE email = ?";
+    db.query(checkUserQuery, [email], async (error, results) => {
+      if (error) {
+        console.error("Error checking user:", error);
+        res.status(500).json({ message: "Internal server error" });
+      } else {
+        if (results.length > 0) {
+          res.status(400).json({ message: "User already exists" });
+        } else {
+          // Generate OTP
+          const otp = Math.floor(100000 + Math.random() * 900000);
 
-    db.query(q, [req.body.username], (err, data) => {
-      if (err) return res.status(500).json(err);
-      if (data.length) return res.status(409).json("User already exists");
+          // Hash password
+          const hashedPassword = await bcrypt.hash(password, 10);
 
-      //create a new user
-      //hash password
-      const salt = bcrypt.genSaltSync(10);
-      const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+          // Save user to database
+          const insertUserQuery =
+            "INSERT INTO users (username, email, password, otp) VALUES (?, ?, ?, ?)";
+          db.query(
+            insertUserQuery,
+            [username, email, hashedPassword, otp],
+            async (error, results) => {
+              if (error) {
+                console.error("Error registering user:", error);
+                res.status(500).json({ message: "Internal server error" });
+              } else {
+                sendMail(email, otp);
 
-      const qu = "INSERT INTO users (username, email, password) VALUES (?)";
-
-      const values = [req.body.username, req.body.email, hashedPassword];
-
-      db.query(qu, [values], (err, data) => {
-        if (err) return res.status(500).json(err);
-        return res.status(200).json("User has been created");
-      });
+                res
+                  .status(200)
+                  .json({ status: true, message: "User register sucessfully" });
+              }
+            }
+          );
+        }
+      }
     });
   },
 
   login: async (req, res) => {
-    const qu = "SELECT * FROM users WHERE email = ?";
+    const q = "SELECT * FROM users WHERE email = ?";
 
-    db.query(qu, [req.body.email], (err, data) => {
+    db.query(q, [req.body.email], async (err, data) => {
       if (err) return res.status(500).json(err);
-      if (data.length === 0) return res.status(404).json("USER NOT FOUND");
+      if (data.length === 0) return res.status(404).json("User not found!");
 
-      const checkPassword = bcrypt.compareSync(
+      const checkPassword = await bcrypt.compare(
         req.body.password,
         data[0].password
       );
 
-      if (checkPassword) {
-        return res.status(400).json("Wrong password");
-      } else {
-        res
-          .status(200)
-          .json({ status: true, message: "login user successfully" });
+      if (!checkPassword === req.body.password) {
+        return res.status(400).json("Wrong password or username!");
       }
 
       const token = jwt.sign(
+        { id: data[0].id, user_type: data[0].user_type, email: data[0].email },
+        process.env.JWT_SECRET,
         {
-          id: data[0].id,
-        },
-        process.env.SECRETE_KEY
+          expiresIn: "1d",
+        }
       );
 
       const { password, ...others } = data[0];
+
       res
-        .cookie("access_token", token, {
-          httponly: true,
+        .cookie("accessToken", token, {
+          httpOnly: true,
         })
         .status(200)
-        .json(others);
+        .json({
+          message: "login sucessfull",
+          others,
+        });
     });
   },
   logout: async (req, res) => {
