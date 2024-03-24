@@ -14,7 +14,7 @@ const verifyToken = (req, res, next) => {
           .json({ status: false, message: "Invalid token" });
       }
 
-      req.userId = user.id;
+      req.userId = user.userid;
       next();
     });
   } else {
@@ -27,8 +27,9 @@ const verifyToken = (req, res, next) => {
 // Verify Token and Authorization
 const verifyTokenAndAuthorization = (req, res, next) => {
   verifyToken(req, res, () => {
-    const userId = req.userId;
-    const getUserTypeQuery = "SELECT user_type FROM users WHERE id = ?";
+    const userId = req.userid;
+
+    const getUserTypeQuery = "SELECT user_type FROM users WHERE userid = ?";
     db.query(getUserTypeQuery, [userId], (error, results) => {
       if (error) {
         console.error("Error retrieving user type:", error);

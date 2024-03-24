@@ -8,7 +8,7 @@ module.exports = {
     const { username, email, password } = req.body;
 
     // Check if user already exists
-    const checkUserQuery = "SELECT * FROM users WHERE email = ?";
+    const checkUserQuery = "SELECT * FROM user WHERE email = ?";
     db.query(checkUserQuery, [email], async (error, results) => {
       if (error) {
         console.error("Error checking user:", error);
@@ -25,7 +25,7 @@ module.exports = {
 
           // Save user to database
           const insertUserQuery =
-            "INSERT INTO users (username, email, password, otp) VALUES (?, ?, ?, ?)";
+            "INSERT INTO user (username, email, password, otp) VALUES (?, ?, ?, ?)";
           db.query(
             insertUserQuery,
             [username, email, hashedPassword, otp],
@@ -48,7 +48,7 @@ module.exports = {
   },
 
   login: async (req, res) => {
-    const q = "SELECT * FROM users WHERE email = ?";
+    const q = "SELECT * FROM user WHERE email = ?";
 
     db.query(q, [req.body.email], async (err, data) => {
       if (err) return res.status(500).json(err);
@@ -56,7 +56,7 @@ module.exports = {
 
       const checkPassword = await bcrypt.compare(
         req.body.password,
-        data[0].password
+        process.env.SECRET_KEY
       );
 
       if (!checkPassword === req.body.password) {

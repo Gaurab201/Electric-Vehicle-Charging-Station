@@ -2,10 +2,10 @@ const db = require("../utils/connect");
 
 module.exports = {
   getUserById: async (req, res) => {
-    const userId = req.params.id;
+    const userID = req.params.userid;
 
-    const getUserQuery = "SELECT * FROM users WHERE id = ?";
-    db.query(getUserQuery, [userId], (error, results) => {
+    const getUserQuery = "SELECT * FROM users WHERE userid = ?";
+    db.query(getUserQuery, [userID], (error, results) => {
       if (error) {
         console.error("Error getting user:", error);
         res.status(500).json({ message: "Internal server error" });
@@ -27,7 +27,7 @@ module.exports = {
 
     try {
       // Retrieve user from the database
-      const getUserQuery = "SELECT * FROM users WHERE id = ?";
+      const getUserQuery = "SELECT * FROM users WHERE userid = ?";
       db.query(getUserQuery, [userId], async (error, results) => {
         if (error) {
           console.error("Error verifying account:", error);
@@ -48,7 +48,7 @@ module.exports = {
         if (otp === user.otp) {
           // Update user verification status and remove OTP
           const updateUserQuery =
-            "UPDATE users SET verification = true, otp = NULL WHERE id = ?";
+            "UPDATE users SET verification = true, otp = NULL WHERE userid = ?";
           db.query(updateUserQuery, [userId], (error, results) => {
             if (error) {
               console.error("Error updating user verification:", error);
@@ -75,9 +75,9 @@ module.exports = {
   },
 
   deleteUserById: async (req, res) => {
-    const userId = req.params.id;
+    const userId = req.params.userid;
 
-    const deleteUserQuery = "DELETE FROM users WHERE id = ?";
+    const deleteUserQuery = "DELETE FROM users WHERE userid = ?";
     db.query(deleteUserQuery, [userId], (error, results) => {
       if (error) {
         res
