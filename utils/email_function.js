@@ -12,8 +12,8 @@ async function sendEmail(userEmail, message) {
   const mailOptions = {
     from: process.env.AUTH_EMAIL,
     to: userEmail,
-    subject: "Khanikura Verification Code",
-    html: `<h1> Khanikura Email Verification Code</h1>
+    subject: "Electriv Vehicle Charging Station Verification Code",
+    html: `<h1> Electric vehicle charging station Email Verification Code</h1>
     <p> Your verification code is:</p>
     <h2 style="color: blue">${message}</h2>
     <p> Please enter your verification code to complete your registration process.</p>

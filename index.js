@@ -1,20 +1,25 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-var cors = require("cors");
+const cors = require("cors");
 
-const cookieParser = require("cookie-parser");
-// const path = require("path");
+const AuthRoute = require("./routes/authRoutes");
+const UserRoute = require("./routes/userRoutes");
+const StationRoutes = require("./routes/stationRoutes");
+const ChagerRoutes = require("./routes/chagerRoutes");
 
 dotenv.config();
 
 const app = express();
 //middleware
-app.use(cookieParser());
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
+app.use("/", AuthRoute);
+app.use("/api/users", UserRoute);
+app.use("/api/stations", StationRoutes);
+app.use("/api/chagers", ChagerRoutes);
 
 app.get("/", (req, res) => {
   res.send("This is ev back server working fine");
@@ -27,14 +32,13 @@ const connect = async () => {
       //   useUnifiedTopology: true,
       // useCreateIndex: true,
     });
-    console.log("khanikura is Connected to database");
+    console.log("Electric Vehicle charging is Connected to database");
   } catch (error) {
     console.log(error);
   }
 };
 
-app.listen(process.env.PORT || 3000, () => {
+app.listen(process.env.PORT || 6013, () => {
   connect();
   console.log("khanikura backend is running on port", process.env.PORT);
 });
-

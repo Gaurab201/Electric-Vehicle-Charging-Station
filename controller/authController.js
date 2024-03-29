@@ -5,7 +5,7 @@ const generateOtp = require("../utils/otp_generator");
 const sendMail = require("../utils/email_function");
 
 module.exports = {
-  createUser: async (req, res) => {
+  register: async (req, res) => {
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]{2,4}$/;
 
     if (!emailRegex.test(req.body.email)) {
