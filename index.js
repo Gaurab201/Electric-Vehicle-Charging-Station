@@ -7,6 +7,7 @@ const AuthRoute = require("./routes/authRoutes");
 const UserRoute = require("./routes/userRoutes");
 const StationRoutes = require("./routes/stationRoutes");
 const ChagerRoutes = require("./routes/chagerRoutes");
+const RatingRoutes = require("./routes/ratingRoutes");
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use("/", AuthRoute);
 app.use("/api/users", UserRoute);
 app.use("/api/stations", StationRoutes);
 app.use("/api/chagers", ChagerRoutes);
+app.use("/api/ratings", RatingRoutes);
 
 app.get("/", (req, res) => {
   res.send("This is ev back server working fine");

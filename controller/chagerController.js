@@ -2,9 +2,9 @@ const Chager = require("../models/chagerModel");
 
 module.exports = {
   addChager: async (req, res) => {
-    const { title } = req.body;
+    const { time, power, price, chagerType } = req.body;
 
-    if (!title) {
+    if (!time || !power || !price || !chagerType) {
       return res
         .status(400)
         .json({ status: false, message: "You have a missing Fields" });
@@ -16,9 +16,20 @@ module.exports = {
       await newChager.save();
       res
         .status(200)
-        .json({ status: true, message: "Food saved successfully" });
+        .json({ status: true, message: "Chager saved successfully" });
     } catch (err) {
-      response.status(404).json({ status: false, message: err.message });
+      res.status(404).json({ status: false, message: err.message });
+    }
+  },
+
+  getChagerById: async (req, res) => {
+    const id = req.params.id;
+    try {
+      const chagers = await Chager.findById(id);
+
+      res.status(200).json(chagers);
+    } catch (error) {
+      res.status(500).json({ status: false, message: error.message });
     }
   },
 };

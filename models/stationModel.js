@@ -5,7 +5,7 @@ const StationSchema = new mongoose.Schema({
     type: "string",
     required: true,
   },
-  time: {
+  openingtime: {
     type: String,
     required: true,
   },
@@ -13,8 +13,22 @@ const StationSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
-  chagers: {
+  chagerType: {
     type: Array,
+    required: true,
+  },
+  totalPorts: {
+    type: String,
+    required: false,
+    default: "3",
+  },
+  availablePorts: {
+    type: String,
+    default: "2",
+    required: false,
+  },
+  chager: {
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
   code: {
@@ -33,21 +47,16 @@ const StationSchema = new mongoose.Schema({
   },
   ratingCount: {
     type: String,
-    required: true,
+    default: "120",
+    required: false,
   },
   isAvailable: {
     type: Boolean,
-    default: true,
+    default: "true",
   },
-  verification: {
+  StationMessage: {
     type: String,
-    default: "Pending",
-    enum: ["Pending", "Verified", "Rejected"],
-  },
-  verificationMessage: {
-    type: String,
-    default:
-      "Your station is under review. We will notify you once it is verified",
+    default: "Your station chager are under construction",
   },
   coords: {
     id: { type: String },

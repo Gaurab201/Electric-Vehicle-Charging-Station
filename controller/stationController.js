@@ -2,14 +2,16 @@ const Station = require("../models/stationModel");
 
 module.exports = {
   addStation: async (req, res) => {
-    const { title, time, code, chagers, ratingCount, coords } = req.body;
+    const { title, openingtime, code, chager, chagerType, rating, coords } =
+      req.body;
 
     if (
       !title ||
-      !time ||
+      !openingtime ||
       !code ||
-      !chagers ||
-      !ratingCount ||
+      !rating ||
+      !chagerType ||
+      !chager ||
       !coords.latitude ||
       !coords.longitude ||
       !coords.address ||

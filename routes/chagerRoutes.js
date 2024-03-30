@@ -4,4 +4,6 @@ const { verifyTokenAndAuthorization } = require("../middleware/verifyToken");
 
 router.post("/", verifyTokenAndAuthorization, chager.addChager);
 
+router.get("/:id", verifyTokenAndAuthorization, chager.getChagerById);
+
 module.exports = router;
